@@ -54,7 +54,6 @@
     <Compile Include="Callout.cs">
       <DependentUpon>Db.tt</DependentUpon>
     </Compile>
-    <Compile Include="Class1.cs" />
     <Compile Include="Db.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -70,6 +69,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Db.edmx</DependentUpon>
     </Compile>
+    <Compile Include="EmergencyService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
