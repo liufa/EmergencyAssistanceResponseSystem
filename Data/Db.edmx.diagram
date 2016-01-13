@@ -5,7 +5,8 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="28a5fd29bb194b4c92d494ec8d747e00" Name="Diagram1">
-        <EntityTypeShape EntityType="EarsModel.Callout" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EarsModel.Callout" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="EarsModel.Users" Width="1.5" PointX="2.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

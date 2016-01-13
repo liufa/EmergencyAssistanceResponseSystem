@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using Services.Models;
 using Services.Providers;
 using Services.Results;
+using System.Linq;
 
 namespace Services.Controllers
 {
@@ -382,6 +383,18 @@ namespace Services.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        public bool RegisterDevice(string token, string coordinates)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentNullException("Token is empty");
+            }
+
+            var data = new Data.EmergencyService();
+           return data.AddUser( token,  coordinates);
+          
         }
 
         #region Helpers

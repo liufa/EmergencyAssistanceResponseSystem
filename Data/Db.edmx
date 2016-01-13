@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="EarsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="EarsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Callout">
           <Key>
             <PropertyRef Name="Id" />
@@ -14,26 +14,47 @@
           <Property Name="Route" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Location" Type="geography" Nullable="false" />
         </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GcmUserId" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="false" />
+          <Property Name="Location" Type="geography" />
+          <Property Name="LastSeenOn" Type="datetime" />
+        </EntityType>
         <EntityContainer Name="EarsModelStoreContainer">
           <EntitySet Name="Callout" EntityType="Self.Callout" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="EarsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="EarsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Callout" EntityType="EarsModel.Callout" />
+          <EntitySet Name="Users" EntityType="EarsModel.Users" />
+        </EntityContainer>
         <EntityType Name="Callout">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Crew" Type="Int32" Nullable="false" />
-          <Property Name="Route" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Route" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Location" Type="Geography" Nullable="false" />
         </EntityType>
-        <EntityContainer Name="EarsEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Callout" EntityType="Self.Callout" />
-        </EntityContainer>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GcmUserId" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Location" Type="Geography" />
+          <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43,10 +64,21 @@
           <EntitySetMapping Name="Callout">
             <EntityTypeMapping TypeName="EarsModel.Callout">
               <MappingFragment StoreEntitySet="Callout">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Crew" ColumnName="Crew" />
-                <ScalarProperty Name="Route" ColumnName="Route" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Route" ColumnName="Route" />
+                <ScalarProperty Name="Crew" ColumnName="Crew" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="EarsModel.Users">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="GcmUserId" ColumnName="GcmUserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -26,5 +26,6 @@ namespace Data
         }
     
         public virtual DbSet<Callout> Callout { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
     }
 }
