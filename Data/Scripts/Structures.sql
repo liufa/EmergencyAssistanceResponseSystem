@@ -10,7 +10,7 @@ GO
 
 CREATE TABLE [dbo].[Users](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[GcmUserId] [nvarchar](64) NOT NULL,
+	[GcmUserId] [nvarchar](256) NOT NULL,
 	[CreatedOn] [datetime] NOT NULL,
 	[Location] [geography] NULL,
 	[LastSeenOn] [datetime] NULL,
