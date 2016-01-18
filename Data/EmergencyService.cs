@@ -37,7 +37,7 @@ namespace Data
             using (var db = new EarsEntities())
             {
                 var user = db.Users.SingleOrDefault(o => o.GcmUserId == token);
-                if (user != null)
+                if (user == null)
                 {
                     db.Users.Add(new Users { CreatedOn = DateTime.Now, GcmUserId = token, LastSeenOn = DateTime.Now, Location = location.ToDbGeography() });
                     db.SaveChanges();
