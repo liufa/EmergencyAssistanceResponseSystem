@@ -17,7 +17,6 @@ using Services.Models;
 using Services.Providers;
 using Services.Results;
 using System.Linq;
-
 namespace Services.Controllers
 {
     [Authorize]
@@ -385,7 +384,10 @@ namespace Services.Controllers
             base.Dispose(disposing);
         }
 
-        public bool RegisterDevice(string token, string coordinates)
+        [AllowAnonymous]
+        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        [System.Web.Http.HttpGet]
+        public void RegisterDevice(string token, string coordinates)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -393,8 +395,10 @@ namespace Services.Controllers
             }
 
             var data = new Data.EmergencyService();
-           return data.AddUser( token,  coordinates);
-          
+            if (data.AddUser(token, coordinates))
+            {
+                HttpContext.Current.Response.StatusCode = 200;
+            }
         }
 
         #region Helpers

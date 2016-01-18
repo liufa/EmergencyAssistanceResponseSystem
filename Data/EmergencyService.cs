@@ -40,6 +40,7 @@ namespace Data
                 if (user != null)
                 {
                     db.Users.Add(new Users { CreatedOn = DateTime.Now, GcmUserId = token, LastSeenOn = DateTime.Now, Location = location.ToDbGeography() });
+                    db.SaveChanges();
                 }
 
                 return true;
