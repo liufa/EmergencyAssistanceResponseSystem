@@ -18,6 +18,8 @@ namespace Data
         public int Crew { get; set; }
         public string Route { get; set; }
         public System.Data.Entity.Spatial.DbGeography Location { get; set; }
+        public System.DateTime LastSignal { get; set; }
+        public Nullable<bool> IsFinished { get; set; }
     
         public virtual Crew Crew1 { get; set; }
     }

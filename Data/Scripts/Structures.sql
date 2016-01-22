@@ -35,11 +35,14 @@ CREATE TABLE [dbo].[Crew](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
+
 CREATE TABLE [dbo].[Callout](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[Crew] [int] NOT NULL,
 	[Route] [nvarchar](max) NOT NULL,
 	[Location] [geography] NOT NULL,
+	[LastSignal] [datetime] NOT NULL,
+	[IsFinished] [bit] NOT NULL
  CONSTRAINT [PK_Callout] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -47,7 +50,6 @@ CREATE TABLE [dbo].[Callout](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-
 
 ALTER TABLE [dbo].[Callout]  WITH CHECK ADD  CONSTRAINT [FK_Callout_Crew] FOREIGN KEY([Crew])
 REFERENCES [dbo].[Crew] ([Id])

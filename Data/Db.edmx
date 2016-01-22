@@ -13,6 +13,8 @@
           <Property Name="Crew" Type="int" Nullable="false" />
           <Property Name="Route" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Location" Type="geography" Nullable="false" />
+          <Property Name="LastSignal" Type="datetime" Nullable="false" />
+          <Property Name="IsFinished" Type="bit" />
         </EntityType>
         <EntityType Name="Crew">
           <Key>
@@ -76,6 +78,8 @@
           <Property Name="Crew" Type="Int32" Nullable="false" />
           <Property Name="Route" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Location" Type="Geography" Nullable="false" />
+          <Property Name="LastSignal" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsFinished" Type="Boolean" />
           <NavigationProperty Name="Crew1" Relationship="EarsModel.FK_Callout_Crew" FromRole="Callout" ToRole="Crew" />
         </EntityType>
         <EntityType Name="Crew">
@@ -120,6 +124,8 @@
           <EntitySetMapping Name="Callout">
             <EntityTypeMapping TypeName="EarsModel.Callout">
               <MappingFragment StoreEntitySet="Callout">
+                <ScalarProperty Name="IsFinished" ColumnName="IsFinished" />
+                <ScalarProperty Name="LastSignal" ColumnName="LastSignal" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="Route" ColumnName="Route" />
                 <ScalarProperty Name="Crew" ColumnName="Crew" />

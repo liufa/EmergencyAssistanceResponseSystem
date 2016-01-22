@@ -23,7 +23,9 @@ namespace Data
                         if (callout != null)
                         {
                             callout.Location = location.ToDbGeography();
+                            callout.LastSignal = DateTime.Now;
                             db.Entry(callout).Property(o => o.Location).IsModified = true;
+                            db.Entry(callout).Property(o => o.LastSignal).IsModified = true;
                         }
                         else {
                            route = CreateNewCallout(db, crew, location);
@@ -39,10 +41,15 @@ namespace Data
             return route;
         }
 
+        public string FinishCallout(string token, string route)
+        {
+            throw new NotImplementedException();
+        }
+
         private string CreateNewCallout(EarsEntities db, Crew crew, string location)
         {
             var route = Guid.NewGuid().ToString();
-            db.Callout.Add(new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route});
+            db.Callout.Add(new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route, IsFinished = false, LastSignal = DateTime.Now});
             return route;
         }
 

@@ -6,7 +6,7 @@
     <edmx:Diagrams>
       <Diagram DiagramId="28a5fd29bb194b4c92d494ec8d747e00" Name="Diagram1">
         <EntityTypeShape EntityType="EarsModel.Callout" Width="1.5" PointX="3" PointY="1" />
-        <EntityTypeShape EntityType="EarsModel.Crew" Width="1.5" PointX="0.75" PointY="0.875" />
+        <EntityTypeShape EntityType="EarsModel.Crew" Width="1.5" PointX="0.75" PointY="1" />
         <EntityTypeShape EntityType="EarsModel.Users" Width="1.5" PointX="0.75" PointY="4.75" />
         <AssociationConnector Association="EarsModel.FK_Callout_Crew" />
       </Diagram>

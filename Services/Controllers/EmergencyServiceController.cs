@@ -17,5 +17,10 @@ namespace Services.Controllers
         {
             return new EmergencyService().CreateOrUpdateLocation(token, coordinates, route);
         }
+
+        public string Finished(string token, string route)
+        {
+            return new EmergencyService().FinishCallout(token, route);
+        }
     }
 }

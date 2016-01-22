@@ -402,7 +402,7 @@ namespace Services.Controllers
         }
 
         [AllowAnonymous]
-        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        [System.Web.Http.AcceptVerbs("GET")]
         [System.Web.Http.HttpGet]
         public void RegisterCrew(string token, string coordinates)
         {
