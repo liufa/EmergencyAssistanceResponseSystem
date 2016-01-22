@@ -13,12 +13,9 @@ namespace Services.Controllers
 {
     public class EmergencyServiceController : Controller
     {
-        public ActionResult Callout(int crewId,  string coordinates, string route)
+        public string Callout(string token,  string coordinates, string route)
         {
-
-            new EmergencyService().CreateOrUpdateLocation(crewId, coordinates, route);
-
-            return null;
+            return new EmergencyService().CreateOrUpdateLocation(token, coordinates, route);
         }
     }
 }

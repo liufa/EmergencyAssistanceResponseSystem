@@ -54,6 +54,9 @@
     <Compile Include="Callout.cs">
       <DependentUpon>Db.tt</DependentUpon>
     </Compile>
+    <Compile Include="Crew.cs">
+      <DependentUpon>Db.tt</DependentUpon>
+    </Compile>
     <Compile Include="Db.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

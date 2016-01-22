@@ -10,26 +10,40 @@ namespace Data
 {
     public class EmergencyService
     {
-        public void CreateOrUpdateLocation(int crewId, string location, string route)
+        public string CreateOrUpdateLocation(string crewToken, string location, string route)
         {
             using (var db = new EarsEntities())
             {
-                var callout = db.Callout.FirstOrDefault(o => o.Route == route);
-                if (callout != null)
+                var crew = db.Crew.SingleOrDefault(o => o.GoogleUserId == crewToken);
+                if (crew != null)
                 {
-                    callout.Location = location.ToDbGeography();
-                    db.Entry(callout).Property(o => o.Location).IsModified = true;
+                    if (!string.IsNullOrEmpty(route))
+                    {
+                        var callout = db.Callout.FirstOrDefault(o => o.Route == route);
+                        if (callout != null)
+                        {
+                            callout.Location = location.ToDbGeography();
+                            db.Entry(callout).Property(o => o.Location).IsModified = true;
+                        }
+                        else {
+                           route = CreateNewCallout(db, crew, location);
+                        }
+                    }
+                    else {
+                        route = CreateNewCallout(db, crew, location);
+                    }
+                    db.SaveChanges();
                 }
-                else {
-                    db.Callout.Add(new Callout { Crew = crewId, Location = location.ToDbGeography(), Route = route });
-                }
-                db.SaveChanges();
             }
+
+            return route;
         }
 
-        public void CreateOrUpdateLocation(int crewId, object p, string route)
+        private string CreateNewCallout(EarsEntities db, Crew crew, string location)
         {
-            throw new NotImplementedException();
+            var route = Guid.NewGuid().ToString();
+            db.Callout.Add(new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route});
+            return route;
         }
 
         public bool AddUser(string token, string location)
