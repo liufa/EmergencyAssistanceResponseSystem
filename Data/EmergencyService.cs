@@ -46,5 +46,20 @@ namespace Data
                 return true;
             }
         }
+
+        public bool AddCrew(string token, string coordinates)
+        {
+            using (var db = new EarsEntities())
+            {
+                var user = db.Crew.SingleOrDefault(o => o.GoogleUserId == token);
+                if (user == null)
+                {
+                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, GoogleUserId = token, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography() });
+                    db.SaveChanges();
+                }
+
+                return true;
+            }
+        }
     }
 }
