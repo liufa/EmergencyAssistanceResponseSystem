@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\matas_000\Documents\Projects\EmergencyAssistanceResponseSystem\Data\Db.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\LIUFA\Google Drive\Projects\Ears Projects\EmergencyAssistanceResponseSystem\Data\Db.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
