@@ -114,6 +114,10 @@
       <Project>{e6b334c8-4916-4336-a41f-96d074834aa3}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Outgoing\Outgoing.csproj">
+      <Project>{7d54ecaf-153e-4064-a0c6-8ed3c77e6ad9}</Project>
+      <Name>Outgoing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

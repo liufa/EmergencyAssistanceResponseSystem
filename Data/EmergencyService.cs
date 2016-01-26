@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core;
+using Outgoing;
 
 namespace Data
 {
@@ -27,15 +28,26 @@ namespace Data
                             db.Entry(callout).Property(o => o.Location).IsModified = true;
                             db.Entry(callout).Property(o => o.LastSignal).IsModified = true;
                         }
-                        else {
-                           route = CreateNewCallout(db, crew, location);
+                        else
+                        {
+                            route = CreateNewCallout(db, crew, location);
                         }
                     }
-                    else {
+                    else
+                    {
                         route = CreateNewCallout(db, crew, location);
                     }
 
                     var users = GetUsersToSendUserNotifications(db, location.ToDbGeography());
+                    if (users.Any())
+                    {
+                        var sender = new GCSNotificationSender();
+                        var count = users.Count();
+                        for (int i = 0; i < (count / 1000) + 1; i++)
+                        {
+                            sender.Send(users.Select(o => o.GcmUserId).Skip(i * 1000).Take(1000).ToList());
+                        }
+                    }
 
                     db.SaveChanges();
                 }
@@ -57,7 +69,7 @@ namespace Data
         private string CreateNewCallout(EarsEntities db, Crew crew, string location)
         {
             var route = Guid.NewGuid().ToString();
-            db.Callout.Add(new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route, IsFinished = false, LastSignal = DateTime.Now});
+            db.Callout.Add(new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route, IsFinished = false, LastSignal = DateTime.Now });
             return route;
         }
 
