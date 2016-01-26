@@ -12,6 +12,8 @@ namespace Data
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class EarsEntities : DbContext
     {
@@ -28,5 +30,10 @@ namespace Data
         public virtual DbSet<Callout> Callout { get; set; }
         public virtual DbSet<Crew> Crew { get; set; }
         public virtual DbSet<Users> Users { get; set; }
+    
+        public virtual ObjectResult<GetNextBatchOfUsersToBeNotified_Result> GetNextBatchOfUsersToBeNotified()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetNextBatchOfUsersToBeNotified_Result>("GetNextBatchOfUsersToBeNotified");
+        }
     }
 }

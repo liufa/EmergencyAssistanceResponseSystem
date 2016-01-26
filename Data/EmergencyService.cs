@@ -34,11 +34,19 @@ namespace Data
                     else {
                         route = CreateNewCallout(db, crew, location);
                     }
+
+                    var users = GetUsersToSendUserNotifications(db, location.ToDbGeography());
+
                     db.SaveChanges();
                 }
             }
 
             return route;
+        }
+
+        public List<Users> GetUsersToSendUserNotifications(EarsEntities db, DbGeography location)
+        {
+            return db.Users.Where(o => o.Location.Distance(location) < 500000).ToList();
         }
 
         public string FinishCallout(string token, string route)

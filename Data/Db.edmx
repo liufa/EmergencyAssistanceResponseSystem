@@ -14,7 +14,8 @@
           <Property Name="Route" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Location" Type="geography" Nullable="false" />
           <Property Name="LastSignal" Type="datetime" Nullable="false" />
-          <Property Name="IsFinished" Type="bit" />
+          <Property Name="IsFinished" Type="bit" Nullable="false" />
+          <Property Name="LastBroadcast" Type="datetime" />
         </EntityType>
         <EntityType Name="Crew">
           <Key>
@@ -35,6 +36,7 @@
           <Property Name="CreatedOn" Type="datetime" Nullable="false" />
           <Property Name="Location" Type="geography" />
           <Property Name="LastSeenOn" Type="datetime" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Callout_Crew">
           <End Role="Crew" Type="Self.Crew" Multiplicity="1" />
@@ -48,6 +50,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="GetNextBatchOfUsersToBeNotified" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="EarsModelStoreContainer">
           <EntitySet Name="Callout" EntityType="Self.Callout" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Crew" EntityType="Self.Crew" Schema="dbo" store:Type="Tables" />
@@ -69,6 +72,7 @@
             <End Role="Crew" EntitySet="Crew" />
             <End Role="Callout" EntitySet="Callout" />
           </AssociationSet>
+          <FunctionImport Name="GetNextBatchOfUsersToBeNotified" ReturnType="Collection(EarsModel.GetNextBatchOfUsersToBeNotified_Result)" />
         </EntityContainer>
         <EntityType Name="Callout">
           <Key>
@@ -79,7 +83,8 @@
           <Property Name="Route" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Location" Type="Geography" Nullable="false" />
           <Property Name="LastSignal" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="IsFinished" Type="Boolean" />
+          <Property Name="IsFinished" Type="Boolean" Nullable="false" />
+          <Property Name="LastBroadcast" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Crew1" Relationship="EarsModel.FK_Callout_Crew" FromRole="Callout" ToRole="Crew" />
         </EntityType>
         <EntityType Name="Crew">
@@ -102,6 +107,7 @@
           <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Location" Type="Geography" />
           <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_Callout_Crew">
           <End Type="EarsModel.Crew" Role="Crew" Multiplicity="1" />
@@ -115,6 +121,13 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetNextBatchOfUsersToBeNotified_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="GcmUserId" Nullable="false" MaxLength="256" />
+          <Property Type="DateTime" Name="CreatedOn" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="LastSeenOn" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -124,6 +137,7 @@
           <EntitySetMapping Name="Callout">
             <EntityTypeMapping TypeName="EarsModel.Callout">
               <MappingFragment StoreEntitySet="Callout">
+                <ScalarProperty Name="LastBroadcast" ColumnName="LastBroadcast" />
                 <ScalarProperty Name="IsFinished" ColumnName="IsFinished" />
                 <ScalarProperty Name="LastSignal" ColumnName="LastSignal" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
@@ -147,6 +161,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="EarsModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
@@ -155,6 +170,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetNextBatchOfUsersToBeNotified" FunctionName="EarsModel.Store.GetNextBatchOfUsersToBeNotified">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EarsModel.GetNextBatchOfUsersToBeNotified_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="GcmUserId" ColumnName="GcmUserId" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
