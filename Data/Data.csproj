@@ -105,6 +105,7 @@
     </Content>
     <Content Include="Scripts\Structures.sql" />
     <Content Include="Scripts\Permissions.sql" />
+    <Content Include="Scripts\TestingData.sql" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
