@@ -26,9 +26,10 @@ GO
 ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_IsActive]  DEFAULT ((0)) FOR [IsActive]
 GO
 
+
 CREATE TABLE [dbo].[Crew](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[GoogleUserId] [nvarchar](256) NOT NULL,
+	[Id] UniqueIdentifier NOT NULL,
+	[ApplicationId] [nvarchar](256) NOT NULL,
 	[CreatedOn] [datetime] NOT NULL,
 	[Location] [geography] NULL,
 	[LastSeenOn] [datetime] NULL,
@@ -41,7 +42,7 @@ CREATE TABLE [dbo].[Crew](
 GO
 CREATE TABLE [dbo].[Callout](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
-	[Crew] [int] NOT NULL,
+	[Crew] UniqueIdentifier NOT NULL,
 	[Route] [nvarchar](max) NOT NULL,
 	[Location] [geography] NOT NULL,
 	[LastSignal] [datetime] NOT NULL,

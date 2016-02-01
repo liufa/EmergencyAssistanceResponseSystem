@@ -20,8 +20,8 @@ namespace Data
             this.Callout = new HashSet<Callout>();
         }
     
-        public int Id { get; set; }
-        public string GoogleUserId { get; set; }
+        public System.Guid Id { get; set; }
+        public string ApplicationId { get; set; }
         public System.DateTime CreatedOn { get; set; }
         public System.Data.Entity.Spatial.DbGeography Location { get; set; }
         public Nullable<System.DateTime> LastSeenOn { get; set; }

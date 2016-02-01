@@ -403,18 +403,16 @@ namespace Services.Controllers
         [AllowAnonymous]
         [System.Web.Http.AcceptVerbs("GET")]
         [System.Web.Http.HttpGet]
-        public void RegisterCrew(string token, string coordinates)
+        public Guid RegisterCrew(string applicationId, string coordinates)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(applicationId))
             {
                 throw new ArgumentNullException("Token is empty");
             }
 
             var data = new Data.EmergencyService();
-            if (data.AddCrew(token, coordinates))
-            {
-                HttpContext.Current.Response.StatusCode = 200;
-            }
+            return data.AddCrew(applicationId, coordinates);
+
         }
         #region Helpers
 

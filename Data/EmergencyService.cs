@@ -9,12 +9,12 @@
     using System.Data.Entity;
     public class EmergencyService
     {
-        public string CreateOrUpdateLocation(string crewToken, string location, string route)
+        public string CreateOrUpdateLocation(Guid crewToken, string location, string route)
         {
             Callout callout = new Callout();
             using (var db = new EarsEntities())
             {
-                var crew = db.Crew.SingleOrDefault(o => o.GoogleUserId == crewToken);
+                var crew = db.Crew.SingleOrDefault(o => o.Id == crewToken);
                 if (crew != null)
                 {
 
@@ -73,11 +73,11 @@
             return db.Users.Where(o => o.Location.Distance(location) < 500000).ToList();
         }
 
-        public void FinishCallout(string token, string route)
+        public void FinishCallout(Guid token, string route)
         {
             using (var db = new EarsEntities())
             {
-                var crew = db.Crew.Include(o => o.Callout).SingleOrDefault(o => o.GoogleUserId == token);
+                var crew = db.Crew.Include(o => o.Callout).SingleOrDefault(o => o.Id == token);
                 if (crew != null)
                 {
                     var callout = crew.Callout.SingleOrDefault(o => o.Route == route);
@@ -113,18 +113,18 @@
             }
         }
 
-        public bool AddCrew(string token, string coordinates)
+        public Guid AddCrew(string applicationId, string coordinates)
         {
             using (var db = new EarsEntities())
             {
-                var user = db.Crew.SingleOrDefault(o => o.GoogleUserId == token);
+                var user = db.Crew.SingleOrDefault(o => o.ApplicationId == applicationId);
                 if (user == null)
                 {
-                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, GoogleUserId = token, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography() });
+                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography() });
                     db.SaveChanges();
                 }
 
-                return true;
+                return user.Id;
             }
         }
     }

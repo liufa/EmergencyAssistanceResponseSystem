@@ -15,7 +15,7 @@ namespace Data
     public partial class Callout
     {
         public long Id { get; set; }
-        public int Crew { get; set; }
+        public System.Guid Crew { get; set; }
         public string Route { get; set; }
         public System.Data.Entity.Spatial.DbGeography Location { get; set; }
         public System.DateTime LastSignal { get; set; }

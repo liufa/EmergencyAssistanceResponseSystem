@@ -10,7 +10,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Crew" Type="int" Nullable="false" />
+          <Property Name="Crew" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Route" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Location" Type="geography" Nullable="false" />
           <Property Name="LastSignal" Type="datetime" Nullable="false" />
@@ -21,8 +21,8 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="GoogleUserId" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ApplicationId" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="false" />
           <Property Name="Location" Type="geography" />
           <Property Name="LastSeenOn" Type="datetime" />
@@ -65,6 +65,7 @@
     <edmx:ConceptualModels>
       <Schema Namespace="EarsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="EarsEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="GetNextBatchOfUsersToBeNotified" ReturnType="Collection(EarsModel.GetNextBatchOfUsersToBeNotified_Result)" />
           <EntitySet Name="Callout" EntityType="EarsModel.Callout" />
           <EntitySet Name="Crew" EntityType="EarsModel.Crew" />
           <EntitySet Name="Users" EntityType="EarsModel.Users" />
@@ -72,14 +73,20 @@
             <End Role="Crew" EntitySet="Crew" />
             <End Role="Callout" EntitySet="Callout" />
           </AssociationSet>
-          <FunctionImport Name="GetNextBatchOfUsersToBeNotified" ReturnType="Collection(EarsModel.GetNextBatchOfUsersToBeNotified_Result)" />
         </EntityContainer>
+        <ComplexType Name="GetNextBatchOfUsersToBeNotified_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="GcmUserId" Nullable="false" MaxLength="256" />
+          <Property Type="DateTime" Name="CreatedOn" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="LastSeenOn" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+        </ComplexType>
         <EntityType Name="Callout">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Crew" Type="Int32" Nullable="false" />
+          <Property Name="Crew" Type="Guid" Nullable="false" />
           <Property Name="Route" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Location" Type="Geography" Nullable="false" />
           <Property Name="LastSignal" Type="DateTime" Nullable="false" Precision="3" />
@@ -91,8 +98,8 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="GoogleUserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ApplicationId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Location" Type="Geography" />
           <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
@@ -121,19 +128,23 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <ComplexType Name="GetNextBatchOfUsersToBeNotified_Result">
-          <Property Type="Int32" Name="Id" Nullable="false" />
-          <Property Type="String" Name="GcmUserId" Nullable="false" MaxLength="256" />
-          <Property Type="DateTime" Name="CreatedOn" Nullable="false" Precision="23" />
-          <Property Type="DateTime" Name="LastSeenOn" Nullable="true" Precision="23" />
-          <Property Type="Boolean" Name="IsActive" Nullable="false" />
-        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="EarsModelStoreContainer" CdmEntityContainer="EarsEntities">
+          <FunctionImportMapping FunctionImportName="GetNextBatchOfUsersToBeNotified" FunctionName="EarsModel.Store.GetNextBatchOfUsersToBeNotified">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EarsModel.GetNextBatchOfUsersToBeNotified_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="GcmUserId" ColumnName="GcmUserId" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <EntitySetMapping Name="Callout">
             <EntityTypeMapping TypeName="EarsModel.Callout">
               <MappingFragment StoreEntitySet="Callout">
@@ -153,7 +164,7 @@
                 <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="GoogleUserId" ColumnName="GoogleUserId" />
+                <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -170,17 +181,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="GetNextBatchOfUsersToBeNotified" FunctionName="EarsModel.Store.GetNextBatchOfUsersToBeNotified">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="EarsModel.GetNextBatchOfUsersToBeNotified_Result">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="GcmUserId" ColumnName="GcmUserId" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
