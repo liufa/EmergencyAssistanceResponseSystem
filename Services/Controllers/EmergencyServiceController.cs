@@ -1,8 +1,7 @@
-﻿using Data;
-using System.Web.Mvc;
-
-namespace Services.Controllers
+﻿namespace Services.Controllers
 {
+    using Data;
+    using System.Web.Mvc;
     public class EmergencyServiceController : Controller
     {
         public string Callout(string token,  string coordinates, string route)
@@ -10,9 +9,9 @@ namespace Services.Controllers
             return new EmergencyService().CreateOrUpdateLocation(token, coordinates, route);
         }
 
-        public string Finished(string token, string route)
+        public void Finished(string token, string route)
         {
-            return new EmergencyService().FinishCallout(token, route);
+            new EmergencyService().FinishCallout(token, route);
         }
     }
 }

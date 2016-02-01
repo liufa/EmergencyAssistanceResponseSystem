@@ -1,12 +1,12 @@
-﻿using Core;
-using Outgoing;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Spatial;
-using System.Linq;
-
-namespace Data
+﻿namespace Data
 {
+    using Core;
+    using Outgoing;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity.Spatial;
+    using System.Linq;
+    using System.Data.Entity;
     public class EmergencyService
     {
         public string CreateOrUpdateLocation(string crewToken, string location, string route)
@@ -63,7 +63,7 @@ namespace Data
             using (var db = new EarsEntities())
             {
                 var coord = coordinates.ToDbGeography();
-                var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500000);
+                var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500000 && !o.IsFinished);
                 return crewsOnCallout.Any();
             }
         }
@@ -73,9 +73,21 @@ namespace Data
             return db.Users.Where(o => o.Location.Distance(location) < 500000).ToList();
         }
 
-        public string FinishCallout(string token, string route)
+        public void FinishCallout(string token, string route)
         {
-            throw new NotImplementedException();
+            using (var db = new EarsEntities())
+            {
+                var crew = db.Crew.Include(o => o.Callout).SingleOrDefault(o => o.GoogleUserId == token);
+                if (crew != null)
+                {
+                    var callout = crew.Callout.SingleOrDefault(o => o.Route == route);
+                    if (callout != null) {
+                        callout.IsFinished = true;
+                        db.Entry(callout).Property(o => o.IsFinished).IsModified = true;
+                        db.SaveChanges();
+                    }
+                }
+            }
         }
 
         private Callout CreateNewCallout(EarsEntities db, Crew crew, string location)
