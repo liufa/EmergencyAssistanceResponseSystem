@@ -92,6 +92,12 @@
 
         private Callout CreateNewCallout(EarsEntities db, Crew crew, string location)
         {
+            var existingRoute = db.Callout.FirstOrDefault(o => o.Crew == crew.Id && !o.IsFinished);
+            if (existingRoute!=null)
+            {
+                FinishCallout(crew.Id, existingRoute.Route);
+            }
+
             var route = Guid.NewGuid().ToString();
             var callout = new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route, IsFinished = false, LastSignal = DateTime.Now };
             db.Callout.Add(callout);
@@ -120,8 +126,9 @@
                 var user = db.Crew.SingleOrDefault(o => o.ApplicationId == applicationId);
                 if (user == null)
                 {
-                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography() });
+                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography(), Id = Guid.NewGuid() });
                     db.SaveChanges();
+                    user = db.Crew.Single(o => o.ApplicationId == applicationId);
                 }
 
                 return user.Id;
