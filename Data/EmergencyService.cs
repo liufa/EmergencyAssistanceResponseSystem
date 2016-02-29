@@ -66,7 +66,7 @@
             using (var db = new EarsEntities())
             {
                 var coord = coordinates.ToDbGeography();
-                var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500000 && !o.IsFinished);
+                var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500 && !o.IsFinished);
                 var result = crewsOnCallout.Any();
                 if (!result)
                 {
@@ -84,7 +84,7 @@
 
         public List<Users> GetUsersToSendUserNotifications(EarsEntities db, DbGeography location)
         {
-            return db.Users.Where(o => o.Location.Distance(location) < 500000 && !o.IsActive).ToList();
+            return db.Users.Where(o => o.Location.Distance(location) < 500 && !o.IsActive).ToList();
         }
 
         public void FinishCallout(Guid token, string route)
