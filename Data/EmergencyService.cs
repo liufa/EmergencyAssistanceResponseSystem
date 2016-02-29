@@ -23,7 +23,7 @@
                         callout = db.Callout.FirstOrDefault(o => o.Route == route);
                         if (callout != null)
                         {
-                            callout.Location = location.ToDbGeography(true);
+                            callout.Location = location.ToDbGeography();
                             callout.LastSignal = DateTime.Now;
                             db.Entry(callout).Property(o => o.Location).IsModified = true;
                             db.Entry(callout).Property(o => o.LastSignal).IsModified = true;
@@ -38,7 +38,7 @@
                         callout = CreateNewCallout(db, crew, location);
                     }
 
-                    var users = GetUsersToSendUserNotifications(db, location.ToDbGeography(true));
+                    var users = GetUsersToSendUserNotifications(db, location.ToDbGeography());
                     if (users.Any())
                     {
                         var sender = new GCSNotificationSender();
@@ -65,9 +65,20 @@
         {
             using (var db = new EarsEntities())
             {
-                var coord = coordinates.ToDbGeography(true);
+                var coord = coordinates.ToDbGeography();
                 var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500000 && !o.IsFinished);
-                return crewsOnCallout.Any();
+                var result = crewsOnCallout.Any();
+                if (!result)
+                {
+                    var user = db.Users.Single(o => o.GcmUserId == token);
+                    user.IsActive = false;
+                    user.Location = coord;
+                    user.LastSeenOn = DateTime.Now;
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+                return result;
             }
         }
 
@@ -102,7 +113,7 @@
             }
 
             var route = Guid.NewGuid().ToString();
-            var callout = new Callout { Crew = crew.Id, Location = location.ToDbGeography(true), Route = route, IsFinished = false, LastSignal = DateTime.Now };
+            var callout = new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route, IsFinished = false, LastSignal = DateTime.Now };
             db.Callout.Add(callout);
             return callout;
         }
@@ -129,12 +140,12 @@
                 var user = db.Crew.SingleOrDefault(o => o.ApplicationId == applicationId);
                 if (user == null)
                 {
-                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography(true), Id = Guid.NewGuid() });
+                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography(), Id = Guid.NewGuid() });
                     db.SaveChanges();
                     user = db.Crew.Single(o => o.ApplicationId == applicationId);
                 }
                 else {
-                    user.Location = coordinates.ToDbGeography(true);
+                    user.Location = coordinates.ToDbGeography();
                     db.Entry(user).Property(o => o.Location).IsModified = true;
                     db.SaveChanges();
                 }
