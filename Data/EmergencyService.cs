@@ -23,7 +23,7 @@
                         callout = db.Callout.FirstOrDefault(o => o.Route == route);
                         if (callout != null)
                         {
-                            callout.Location = location.ToDbGeography();
+                            callout.Location = location.ToDbGeography(true);
                             callout.LastSignal = DateTime.Now;
                             db.Entry(callout).Property(o => o.Location).IsModified = true;
                             db.Entry(callout).Property(o => o.LastSignal).IsModified = true;
@@ -38,14 +38,17 @@
                         callout = CreateNewCallout(db, crew, location);
                     }
 
-                    var users = GetUsersToSendUserNotifications(db, location.ToDbGeography());
+                    var users = GetUsersToSendUserNotifications(db, location.ToDbGeography(true));
                     if (users.Any())
                     {
                         var sender = new GCSNotificationSender();
                         var count = users.Count();
                         for (int i = 0; i < (count / 1000) + 1; i++)
                         {
-                            sender.Send(users.Select(o => o.GcmUserId).Skip(i * 1000).Take(1000).ToList());
+                            var users1000 = users.Skip(i * 1000).Take(1000).ToList();
+                            sender.Send(users1000.Select(o => o.GcmUserId).ToList());
+                            users1000.ForEach(o => { o.IsActive = true; db.Entry(o).Property(oo => oo.IsActive).IsModified = true; });
+                            db.SaveChanges();
                         }
                     }
 
@@ -62,7 +65,7 @@
         {
             using (var db = new EarsEntities())
             {
-                var coord = coordinates.ToDbGeography();
+                var coord = coordinates.ToDbGeography(true);
                 var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500000 && !o.IsFinished);
                 return crewsOnCallout.Any();
             }
@@ -70,7 +73,7 @@
 
         public List<Users> GetUsersToSendUserNotifications(EarsEntities db, DbGeography location)
         {
-            return db.Users.Where(o => o.Location.Distance(location) < 500000).ToList();
+            return db.Users.Where(o => o.Location.Distance(location) < 500000 && !o.IsActive).ToList();
         }
 
         public void FinishCallout(Guid token, string route)
@@ -99,7 +102,7 @@
             }
 
             var route = Guid.NewGuid().ToString();
-            var callout = new Callout { Crew = crew.Id, Location = location.ToDbGeography(), Route = route, IsFinished = false, LastSignal = DateTime.Now };
+            var callout = new Callout { Crew = crew.Id, Location = location.ToDbGeography(true), Route = route, IsFinished = false, LastSignal = DateTime.Now };
             db.Callout.Add(callout);
             return callout;
         }
@@ -126,9 +129,14 @@
                 var user = db.Crew.SingleOrDefault(o => o.ApplicationId == applicationId);
                 if (user == null)
                 {
-                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography(), Id = Guid.NewGuid() });
+                    db.Crew.Add(new Crew { CreatedOn = DateTime.Now, ApplicationId = applicationId, LastSeenOn = DateTime.Now, Location = coordinates.ToDbGeography(true), Id = Guid.NewGuid() });
                     db.SaveChanges();
                     user = db.Crew.Single(o => o.ApplicationId == applicationId);
+                }
+                else {
+                    user.Location = coordinates.ToDbGeography(true);
+                    db.Entry(user).Property(o => o.Location).IsModified = true;
+                    db.SaveChanges();
                 }
 
                 return user.Id;
