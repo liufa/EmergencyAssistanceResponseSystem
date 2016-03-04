@@ -84,7 +84,7 @@
 
         public List<Users> GetUsersToSendUserNotifications(EarsEntities db, DbGeography location)
         {
-            return db.Users.Where(o => o.Location.Distance(location) < 500 && !o.IsActive).ToList();
+            return db.Users.Where(o => /*o.Location.Distance(location) < 500 &&*/ !o.IsActive).ToList();
         }
 
         public void FinishCallout(Guid token, string route)
