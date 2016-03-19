@@ -37,6 +37,7 @@
           <Property Name="Location" Type="geography" />
           <Property Name="LastSeenOn" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="LastNotified" Type="datetime" />
         </EntityType>
         <Association Name="FK_Callout_Crew">
           <End Role="Crew" Type="Self.Crew" Multiplicity="1" />
@@ -115,6 +116,7 @@
           <Property Name="Location" Type="Geography" />
           <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="LastNotified" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_Callout_Crew">
           <End Type="EarsModel.Crew" Role="Crew" Multiplicity="1" />
@@ -172,6 +174,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="EarsModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="LastNotified" ColumnName="LastNotified" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
@@ -181,7 +184,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

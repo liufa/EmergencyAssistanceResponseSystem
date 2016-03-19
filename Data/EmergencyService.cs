@@ -65,25 +65,31 @@
         {
             using (var db = new EarsEntities())
             {
-                var coord = coordinates.ToDbGeography();
-                var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 500 && !o.IsFinished);
-                var result = crewsOnCallout.Any();
+                var coord = coordinates.ToDbGeography(false);
+                var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 260 && !o.IsFinished);
+                var raiseAlarm = crewsOnCallout.Any();
 
                 var user = db.Users.Single(o => o.GcmUserId == token);
-               // user.IsActive = false;
+                if (user.LastNotified.HasValue && user.LastNotified.Value.AddMinutes(1) > DateTime.Now)
+                {
+                    raiseAlarm = false;
+                }
+                if(raiseAlarm) {
+                    user.LastNotified = DateTime.Now;
+                }
                 user.Location = coord;
                 user.LastSeenOn = DateTime.Now;
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
 
-                return result;
+                return raiseAlarm;
             }
         }
 
         public List<Users> GetUsersToSendUserNotifications(EarsEntities db, DbGeography location)
         {
-            var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
-            return db.Users.Where(o => o.LastSeenOn < threeMinutesAgo).ToList();
+          //  var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
+            return db.Users/*.Where(o => o.LastSeenOn < threeMinutesAgo)*/.ToList();
         }
 
         public void FinishCallout(Guid token, string route)

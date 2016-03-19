@@ -20,5 +20,6 @@ namespace Data
         public System.Data.Entity.Spatial.DbGeography Location { get; set; }
         public Nullable<System.DateTime> LastSeenOn { get; set; }
         public bool IsActive { get; set; }
+        public Nullable<System.DateTime> LastNotified { get; set; }
     }
 }
