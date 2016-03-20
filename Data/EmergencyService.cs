@@ -65,7 +65,7 @@
         {
             using (var db = new EarsEntities())
             {
-                var coord = coordinates.ToDbGeography(false);
+                var coord = coordinates.ToDbGeography();
                 var crewsOnCallout = db.Callout.Where(o => o.Location.Distance(coord) < 260 && !o.IsFinished);
                 var raiseAlarm = crewsOnCallout.Any();
 
